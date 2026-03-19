@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Oferente - Dashboard')}"></head>
+<body>
+    <nav th:replace="~{fragments/layout :: nav-oferente}"></nav>
+
+    <div class="container">
+        <h1>Oferente - Dashboard</h1>
+        <p class="subtitle">Administra tus habilidades y tu CV.</p>
+
+        <div class="btn-group">
+            <a th:href="@{/oferente/habilidades}" class="btn btn-primary">Mis habilidades</a>
+            <a th:href="@{/oferente/mi-cv}" class="btn btn-primary">Mi CV</a>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

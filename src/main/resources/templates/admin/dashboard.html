@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Administrador')}"></head>
+<body>
+    <nav th:replace="~{fragments/layout :: nav-admin}"></nav>
+
+    <div class="container">
+        <h1>Administrador</h1>
+        <p class="subtitle">Aprobaciones, catalogo de caracteristicas y reportes.</p>
+
+        <div class="btn-group">
+            <a th:href="@{/admin/empresas/pendientes}" class="btn btn-primary">Empresas pendientes</a>
+            <a th:href="@{/admin/oferentes/pendientes}" class="btn btn-success">Oferentes pendientes</a>
+            <a th:href="@{/admin/caracteristicas}" class="btn btn-warning">Caracteristicas</a>
+            <a th:href="@{/admin/reportes}" class="btn btn-danger">Reportes</a>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

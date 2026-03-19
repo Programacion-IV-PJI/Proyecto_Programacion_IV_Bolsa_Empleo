@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Empresa - Candidatos')}"></head>
+<body>
+    <nav th:replace="~{fragments/layout :: nav-empresa}"></nav>
+
+    <div class="container-wide">
+        <h1>Candidatos para el puesto</h1>
+        <p class="subtitle">Puesto: <strong th:text="${puesto.descripcion}">Puesto</strong></p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Oferente</th>
+                    <th>Requisitos cumplidos</th>
+                    <th>% Coincidencia</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="r : ${resultados}">
+                    <td th:text="${r.oferente.nombreCompleto}">Nombre</td>
+                    <td th:text="${r.cumplidas} + ' / ' + ${r.total}">0 / 0</td>
+                    <td th:text="${r.porcentaje} + '%'">0%</td>
+                    <td>
+                        <a th:href="@{/empresa/candidatos/{id}(id=${r.oferente.id})}"
+                           class="btn btn-warning">Ver detalle</a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(resultados)}">
+                    <td colspan="4" style="color: #999;">No se encontraron candidatos.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div style="margin-top: 20px;">
+            <a th:href="@{/empresa/puestos}" class="btn btn-outline">Volver</a>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

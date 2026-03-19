@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Admin - Caracteristicas')}"></head>
+<body>
+    <nav th:replace="~{fragments/layout :: nav-admin}"></nav>
+
+    <div class="container-wide">
+        <h1>Caracteristicas</h1>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start;">
+            <div>
+                <strong>Ruta:</strong>
+                <div class="breadcrumb" style="margin-top: 8px;">
+                    <a th:href="@{/admin/caracteristicas}">Raices</a>
+                    <th:block th:each="anc : ${ruta}">
+                        <span class="separator">/</span>
+                        <a th:href="@{/admin/caracteristicas(actualId=${anc.id})}"
+                           th:text="${anc.nombre}">Cat</a>
+                    </th:block>
+                </div>
+
+                <p th:if="${actual != null}" style="margin-bottom: 12px;">
+                    <strong>Categorias: </strong>
+                    <span th:text="${actual.nombre}"></span>
+                </p>
+                <p th:unless="${actual != null}" style="margin-bottom: 12px;">
+                    <strong>Categorias: </strong> raices
+                </p>
+
+                <div th:each="sub : ${subcategorias}" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee;">
+                    <span th:text="${sub.nombre}" style="font-size: 15px;">Subcategoria</span>
+                    <a th:href="@{/admin/caracteristicas(actualId=${sub.id})}"
+                       class="btn btn-primary" style="padding: 4px 14px;">Entrar</a>
+                </div>
+
+                <p th:if="${#lists.isEmpty(subcategorias)}" style="color: #999; margin-top: 12px;">
+                    No hay subcategorias en este nivel.
+                </p>
+            </div>
+
+            <div class="detail-box">
+                <h2 style="font-size: 16px;">Agregar Caracteristica</h2>
+
+                <form th:action="@{/admin/caracteristicas/crear}" method="post">
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        <input type="text" name="nombre" required placeholder="Ej: Java">
+                    </div>
+                    <div class="form-group">
+                        <label>Padre</label>
+                        <select name="padreId">
+                            <option value="">(sin padre - raiz)</option>
+                            <option th:each="p : ${posiblesPadres}"
+                                    th:value="${p.id}"
+                                    th:text="${p.nombre}">Padre</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-success">Crear</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

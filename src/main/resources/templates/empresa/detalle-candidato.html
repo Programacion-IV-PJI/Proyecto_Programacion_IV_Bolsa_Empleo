@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Empresa - Detalle candidato')}"></head>
+<body>
+    <nav th:replace="~{fragments/layout :: nav-empresa}"></nav>
+
+    <div class="container">
+        <h1>Detalle de oferente</h1>
+
+        <div class="detail-box">
+            <h2 th:text="${oferente.nombreCompleto}">Nombre</h2>
+            <p><strong>Identificacion:</strong> <span th:text="${oferente.identificacion}"></span></p>
+            <p><strong>Email:</strong> <span th:text="${oferente.correo}"></span></p>
+            <p><strong>Telefono:</strong> <span th:text="${oferente.telefono}"></span></p>
+            <p><strong>Residencia:</strong> <span th:text="${oferente.residencia}"></span></p>
+        </div>
+
+        <h2>Habilidades</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Caracteristica</th>
+                    <th>Nivel</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="h : ${habilidades}">
+                    <td th:text="${h.caracteristica.nombre}">Habilidad</td>
+                    <td th:text="${h.nivel}">0</td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(habilidades)}">
+                    <td colspan="2" style="color: #999;">Sin habilidades registradas.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div style="margin-top: 20px;" th:if="${oferente.cvPath != null}">
+            <a th:href="@{/uploads/cvs/{file}(file=${oferente.id} + '_cv.pdf')}"
+               class="btn btn-primary" target="_blank">Ver CV (PDF)</a>
+        </div>
+
+        <div style="margin-top: 12px;">
+            <a onclick="history.back()" class="btn btn-outline" style="cursor:pointer;">Volver</a>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

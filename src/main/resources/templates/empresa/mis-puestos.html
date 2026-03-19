@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Empresa - Mis puestos')}"></head>
+<body>
+    <nav th:replace="~{fragments/layout :: nav-empresa}"></nav>
+
+    <div class="container-wide">
+        <h1>Mis puestos</h1>
+        <a th:href="@{/empresa/puestos/nuevo}" class="btn btn-danger" style="margin-bottom: 16px; display: inline-block;">Publicar puesto</a>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Descripcion</th>
+                    <th>Salario</th>
+                    <th>Activo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="puesto : ${puestos}">
+                    <td th:text="${puesto.id}">1</td>
+                    <td th:text="${puesto.descripcion}">Puesto</td>
+                    <td th:text="${puesto.salario}">0</td>
+                    <td>
+                        <span th:if="${puesto.activa}" class="badge-active">Si</span>
+                        <span th:unless="${puesto.activa}" class="badge-inactive">No</span>
+                    </td>
+                    <td>
+                        <div class="btn-group" style="margin-top: 0;">
+                            <a th:if="${puesto.activa}"
+                               th:href="@{/empresa/puestos/desactivar/{id}(id=${puesto.id})}"
+                               class="btn btn-warning">Desactivar</a>
+                            <a th:href="@{/empresa/candidatos/buscar(puestoId=${puesto.id})}"
+                               class="btn btn-success">Buscar candidatos</a>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(puestos)}">
+                    <td colspan="5" style="color: #999;">No tienes puestos publicados.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

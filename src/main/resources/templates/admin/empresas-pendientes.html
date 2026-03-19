@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Admin - Empresas pendientes')}"></head>
+<body>
+    <nav th:replace="~{fragments/layout :: nav-admin}"></nav>
+
+    <div class="container">
+        <h1>Empresas pendientes</h1>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Accion</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="e : ${empresas}">
+                    <td th:text="${e.correo}">correo@empresa.com</td>
+                    <td>
+                        <a th:href="@{/admin/empresas/aprobar/{id}(id=${e.id})}"
+                           class="btn btn-warning">Aprobar y generar clave</a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(empresas)}">
+                    <td colspan="2" style="color: #999;">No hay empresas pendientes.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

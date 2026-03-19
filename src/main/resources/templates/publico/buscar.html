@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Buscar puestos')}"></head>
+<body>
+    <nav th:replace="~{fragments/layout :: nav-publica}"></nav>
+
+    <div class="container">
+        <div class="search-box">
+            <h2>Buscar puestos por caracteristicas</h2>
+            <form th:action="@{/buscar}" method="post">
+                <ul class="checkbox-tree">
+                    <li th:each="c : ${caracteristicas}" th:if="${c.esRaiz()}">
+                        <label>
+                            <input type="checkbox" name="caracteristicaIds" th:value="${c.id}">
+                            <span th:text="${c.nombre}">Categoria</span>
+                        </label>
+                        <ul th:if="${c.hijos != null && !c.hijos.isEmpty()}">
+                            <li th:each="hijo : ${c.hijos}">
+                                <label>
+                                    <input type="checkbox" name="caracteristicaIds" th:value="${hijo.id}">
+                                    <span th:text="${hijo.nombre}">Subcategoria</span>
+                                </label>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <div class="btn-group" style="margin-top: 16px;">
+                    <button type="submit" class="btn btn-success">Buscar</button>
+                    <a th:href="@{/buscar}" class="btn btn-outline">Limpiar</a>
+                </div>
+            </form>
+        </div>
+
+        <div class="results-section" th:if="${puestos != null && !puestos.isEmpty()}">
+            <h2>Resultados</h2>
+            <div th:each="puesto : ${puestos}" class="result-card">
+                <h3 th:text="${puesto.empresa.nombre}">Empresa</h3>
+                <p class="card-title" th:text="${puesto.descripcion}">Puesto</p>
+                <p th:text="'Salario: ' + ${puesto.salario}">Salario</p>
+            </div>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

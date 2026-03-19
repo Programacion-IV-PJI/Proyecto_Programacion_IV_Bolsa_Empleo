@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Admin - Reportes')}"></head>
+<body>
+    <nav th:replace="~{fragments/layout :: nav-admin}"></nav>
+
+    <div class="container">
+        <h1>Reportes</h1>
+        <p class="subtitle">Generar reportes PDF de puestos solicitados por mes.</p>
+
+        <div class="form-container">
+            <h2>Generar reporte</h2>
+            <form th:action="@{/admin/reportes/generar}" method="get">
+                <div class="form-group">
+                    <label>Mes</label>
+                    <select name="mes">
+                        <option value="1">Enero</option>
+                        <option value="2">Febrero</option>
+                        <option value="3">Marzo</option>
+                        <option value="4">Abril</option>
+                        <option value="5">Mayo</option>
+                        <option value="6">Junio</option>
+                        <option value="7">Julio</option>
+                        <option value="8">Agosto</option>
+                        <option value="9">Septiembre</option>
+                        <option value="10">Octubre</option>
+                        <option value="11">Noviembre</option>
+                        <option value="12">Diciembre</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Ano</label>
+                    <select name="anio">
+                        <option value="2026">2026</option>
+                        <option value="2025">2025</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-danger">Generar PDF</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Login')}"></head>
+<body>
+    <nav th:replace="~{fragments/layout :: nav-publica}"></nav>
+
+    <div class="container">
+        <div class="form-container">
+            <h2>Login</h2>
+            <div class="login-icon">&#128100;</div>
+
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+            <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+
+            <form th:action="@{/login}" method="post">
+                <div class="form-group">
+                    <label>Usuario</label>
+                    <input type="text" name="usuario" placeholder="Correo o identificacion" required>
+                </div>
+                <div class="form-group">
+                    <label>Contrasena</label>
+                    <input type="password" name="clave" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-danger">Entrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Registro Empresa')}"></head>
+<body>
+    <nav th:replace="~{fragments/layout :: nav-publica}"></nav>
+
+    <div class="container">
+        <div class="form-container wide">
+            <h2>Registro de Empresa</h2>
+
+            <form th:action="@{/registro/empresa}" th:object="${empresa}" method="post">
+                <div class="form-group">
+                    <label>Nombre de la empresa</label>
+                    <input type="text" th:field="*{nombre}">
+                    <small class="form-error" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></small>
+                </div>
+                <div class="form-group">
+                    <label>Localizacion</label>
+                    <input type="text" th:field="*{localizacion}">
+                </div>
+                <div class="form-group">
+                    <label>Correo electronico</label>
+                    <input type="email" th:field="*{correo}">
+                    <small class="form-error" th:if="${#fields.hasErrors('correo')}" th:errors="*{correo}"></small>
+                </div>
+                <div class="form-group">
+                    <label>Telefono</label>
+                    <input type="text" th:field="*{telefono}">
+                </div>
+                <div class="form-group">
+                    <label>Descripcion</label>
+                    <textarea th:field="*{descripcion}"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">Registrarse</button>
+                    <a th:href="@{/}" class="btn btn-outline">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Admin - Oferentes pendientes')}"></head>
+<body>
+    <nav th:replace="~{fragments/layout :: nav-admin}"></nav>
+
+    <div class="container">
+        <h1>Oferentes pendientes</h1>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Accion</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="o : ${oferentes}">
+                    <td th:text="${o.correo}">correo@oferente.com</td>
+                    <td>
+                        <a th:href="@{/admin/oferentes/aprobar/{id}(id=${o.id})}"
+                           class="btn btn-warning">Aprobar y generar clave</a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(oferentes)}">
+                    <td colspan="2" style="color: #999;">No hay oferentes pendientes.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

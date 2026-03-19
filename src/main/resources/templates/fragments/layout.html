@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:fragment="head(titulo)">
+    <meta charset="UTF-8">
+    <title th:text="${titulo}">Bolsa de Empleo</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+
+<nav th:fragment="nav-publica" class="navbar">
+    <div class="nav-left">
+        <a th:href="@{/}" class="nav-logo">BolsaEmpleo</a>
+        <a th:href="@{/buscar}">Buscar puestos</a>
+        <a th:href="@{/registro/empresa}">Registro Empresa</a>
+        <a th:href="@{/registro/oferente}">Registro Oferente</a>
+    </div>
+    <div class="nav-right">
+        <a th:href="@{/login}">Login</a>
+    </div>
+</nav>
+
+<nav th:fragment="nav-empresa" class="navbar">
+    <div class="nav-left">
+        <a th:href="@{/}" class="nav-logo">BolsaEmpleo</a>
+        <a th:href="@{/empresa/dashboard}">Dashboard</a>
+        <a th:href="@{/empresa/puestos}">Mis puestos</a>
+        <a th:href="@{/empresa/puestos/nuevo}">Publicar puesto</a>
+    </div>
+    <div class="nav-right">
+        <span th:text="${session.correo}"></span>
+        <a th:href="@{/logout}">Salir</a>
+    </div>
+</nav>
+
+<nav th:fragment="nav-oferente" class="navbar">
+    <div class="nav-left">
+        <a th:href="@{/}" class="nav-logo">BolsaEmpleo</a>
+        <a th:href="@{/oferente/dashboard}">Dashboard</a>
+        <a th:href="@{/oferente/habilidades}">Mis habilidades</a>
+        <a th:href="@{/oferente/mi-cv}">Mi CV</a>
+    </div>
+    <div class="nav-right">
+        <span th:text="${session.correo}"></span>
+        <a th:href="@{/logout}">Salir</a>
+    </div>
+</nav>
+
+<nav th:fragment="nav-admin" class="navbar">
+    <div class="nav-left">
+        <a th:href="@{/}" class="nav-logo">BolsaEmpleo</a>
+        <a th:href="@{/admin/dashboard}">Dashboard</a>
+        <a th:href="@{/admin/empresas/pendientes}">Empresas pendientes</a>
+        <a th:href="@{/admin/oferentes/pendientes}">Oferentes pendientes</a>
+        <a th:href="@{/admin/caracteristicas}">Caracteristicas</a>
+        <a th:href="@{/admin/reportes}">Reportes</a>
+    </div>
+    <div class="nav-right">
+        <span th:text="${session.correo}"></span>
+        <a th:href="@{/logout}">Salir</a>
+    </div>
+</nav>
+
+<footer th:fragment="footer">
+    <div>
+        <strong>Bolsa de Empleo</strong><br>
+        Total Soft Inc.
+    </div>
+    <div style="text-align: right;">
+        Contacto: info@bolsaempleo.local<br>
+        Creditos: Equipo de desarrollo
+    </div>
+</footer>
+
+</html>

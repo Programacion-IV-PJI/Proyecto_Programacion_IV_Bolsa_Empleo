@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Registro Oferente')}"></head>
+<body>
+    <nav th:replace="~{fragments/layout :: nav-publica}"></nav>
+
+    <div class="container">
+        <div class="form-container wide">
+            <h2>Registro de Oferente</h2>
+
+            <form th:action="@{/registro/oferente}" th:object="${oferente}" method="post">
+                <div class="form-group">
+                    <label>Identificacion</label>
+                    <input type="text" th:field="*{identificacion}">
+                    <small class="form-error" th:if="${#fields.hasErrors('identificacion')}" th:errors="*{identificacion}"></small>
+                </div>
+                <div class="form-group">
+                    <label>Nombre</label>
+                    <input type="text" th:field="*{nombre}">
+                    <small class="form-error" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></small>
+                </div>
+                <div class="form-group">
+                    <label>Primer apellido</label>
+                    <input type="text" th:field="*{primerApellido}">
+                    <small class="form-error" th:if="${#fields.hasErrors('primerApellido')}" th:errors="*{primerApellido}"></small>
+                </div>
+                <div class="form-group">
+                    <label>Nacionalidad</label>
+                    <input type="text" th:field="*{nacionalidad}">
+                </div>
+                <div class="form-group">
+                    <label>Telefono</label>
+                    <input type="text" th:field="*{telefono}">
+                </div>
+                <div class="form-group">
+                    <label>Correo electronico</label>
+                    <input type="email" th:field="*{correo}">
+                    <small class="form-error" th:if="${#fields.hasErrors('correo')}" th:errors="*{correo}"></small>
+                </div>
+                <div class="form-group">
+                    <label>Lugar de residencia</label>
+                    <input type="text" th:field="*{residencia}">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">Registrarse</button>
+                    <a th:href="@{/}" class="btn btn-outline">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

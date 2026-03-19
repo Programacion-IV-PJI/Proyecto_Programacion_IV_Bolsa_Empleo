@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Oferente - Habilidades')}"></head>
+<body>
+    <nav th:replace="~{fragments/layout :: nav-oferente}"></nav>
+
+    <div class="container-wide">
+        <h1>Mis habilidades</h1>
+
+        <div class="habilidades-layout">
+            <div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Caracteristica</th>
+                            <th>Nivel</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="h : ${misHabilidades}">
+                            <td th:text="${h.caracteristica.nombre}">Habilidad</td>
+                            <td th:text="${h.nivel}">0</td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(misHabilidades)}">
+                            <td colspan="2" style="color: #999;">Sin habilidades.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div>
+                <strong>Ruta:</strong>
+                <div class="breadcrumb" style="margin-top: 8px;">
+                    <a th:href="@{/oferente/habilidades}">Raices</a>
+                    <th:block th:each="anc : ${ruta}">
+                        <span class="separator">/</span>
+                        <a th:href="@{/oferente/habilidades(actualId=${anc.id})}"
+                           th:text="${anc.nombre}">Cat</a>
+                    </th:block>
+                </div>
+
+                <p th:if="${actual != null}">
+                    <strong>Subcategorias de: </strong>
+                    <span th:text="${actual.nombre}"></span>
+                </p>
+
+                <div th:each="sub : ${subcategorias}" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee;">
+                    <span th:text="${sub.nombre}">Subcategoria</span>
+                    <a th:href="@{/oferente/habilidades(actualId=${sub.id})}" class="btn btn-primary" style="padding: 4px 12px;">Entrar</a>
+                </div>
+
+                <p th:if="${#lists.isEmpty(subcategorias)}" style="color: #999; margin-top: 8px;">
+                    No hay subcategorias.
+                </p>
+            </div>
+
+            <div>
+                <div class="detail-box">
+                    <h2 style="font-size: 16px;">Agregar Habilidad</h2>
+                    <form th:action="@{/oferente/habilidades/agregar}" method="post">
+                        <div class="form-group">
+                            <label>Caracteristica</label>
+                            <select name="caracteristicaId" required>
+                                <option value="" disabled selected>Seleccione...</option>
+                                <option th:each="c : ${todasCaracteristicas}"
+                                        th:value="${c.id}"
+                                        th:text="${c.nombre}">Cat</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Nivel (1-5)</label>
+                            <input type="number" name="nivel" min="1" max="5" value="1" required>
+                        </div>
+                        <button type="submit" class="btn btn-success" style="width: 100%;">Agregar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

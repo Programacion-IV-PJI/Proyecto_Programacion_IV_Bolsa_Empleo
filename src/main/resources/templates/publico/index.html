@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Inicio')}"></head>
+<body>
+    <nav th:replace="~{fragments/layout :: nav-publica}"></nav>
+
+    <div class="container-wide">
+        <h1>Bolsa de Empleo</h1>
+        <p class="subtitle">Ultimos 5 puestos publicos</p>
+
+        <div class="cards-grid">
+            <div class="card" th:each="puesto : ${puestos}">
+                <h3 th:text="${puesto.empresa.nombre}">Nombre Empresa</h3>
+                <p class="card-title" th:text="${puesto.descripcion}">Puesto</p>
+                <p class="card-salary" th:text="'&#8353; ' + ${puesto.salario}">Salario</p>
+                <a href="#" class="btn btn-outline">Ver detalle</a>
+
+                <div class="card-detail">
+                    <h4 th:text="${puesto.descripcion}">Puesto</h4>
+                    <ul>
+                        <li th:each="pc : ${puesto.caracteristicas}"
+                            th:text="${pc.caracteristica.nombre} + ' (nivel ' + ${pc.nivelDeseado} + ')'">
+                            Caracteristica
+                        </li>
+                    </ul>
+                    <p th:if="${#lists.isEmpty(puesto.caracteristicas)}" style="font-size: 13px; color: #999;">
+                        Sin caracteristicas registradas
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <p th:if="${#lists.isEmpty(puestos)}" style="margin-top: 24px; color: #999;">
+            No hay puestos publicos disponibles.
+        </p>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

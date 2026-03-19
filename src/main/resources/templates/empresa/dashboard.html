@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Empresa - Dashboard')}"></head>
+<body>
+    <nav th:replace="~{fragments/layout :: nav-empresa}"></nav>
+
+    <div class="container">
+        <h1>Empresa - Dashboard</h1>
+        <p class="subtitle">Desde aqui podes administrar tus puestos y buscar candidatos.</p>
+
+        <div class="btn-group">
+            <a th:href="@{/empresa/puestos}" class="btn btn-primary">Ver mis puestos</a>
+            <a th:href="@{/empresa/puestos/nuevo}" class="btn btn-success">Publicar nuevo puesto</a>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>
