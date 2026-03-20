@@ -15,4 +15,12 @@ public class Habilidad {
 
     @ManyToOne
     private Caracteristica caracteristica;
+
+    // GETTERS
+    public Long getId() { return id; }
+
+    public int getNivel() { return nivel; }
+    public void setNivel(int nivel) { this.nivel = nivel; }
+
+    public Caracteristica getCaracteristica() { return caracteristica; }
 }

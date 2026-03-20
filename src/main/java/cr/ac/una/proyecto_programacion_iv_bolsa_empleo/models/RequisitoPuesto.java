@@ -16,4 +16,11 @@ public class RequisitoPuesto {
 
     @ManyToOne
     private Caracteristica caracteristica;
+
+    // GETTERS
+    public Long getId() { return id; }
+
+    public int getNivelRequerido() { return nivelRequerido; }
+
+    public Caracteristica getCaracteristica() { return caracteristica; }
 }

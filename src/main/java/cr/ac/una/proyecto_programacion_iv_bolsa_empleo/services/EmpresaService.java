@@ -29,4 +29,11 @@ public class EmpresaService {
         empresaRepository.deleteById(id);
     }
 
+    public void aprobar(Long id) {
+        Empresa e = obtenerPorId(id);
+        if (e != null) {
+            e.setAprobado(true); // ⚠️ necesitas este campo en el modelo
+            empresaRepository.save(e);
+        }
+    }
 }

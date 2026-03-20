@@ -11,12 +11,20 @@ import java.util.List;
 public class HabilidadService {
     @Autowired
     private IHabilidadRepository habilidadRepository;
+
     public List<Habilidad> obtenerTodas(){
+
         return habilidadRepository.findAll();
     }
 
     public Habilidad guardar(Habilidad habilidad){
+
         return habilidadRepository.save(habilidad);
+    }
+
+    public List<Habilidad> obtenerPorOferente(Long oferenteId){
+
+        return habilidadRepository.findByOferenteId(oferenteId);
     }
 
 }

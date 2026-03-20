@@ -20,4 +20,7 @@ public class RequisitoPuestoService {
         return requisitoRepository.save(requisitoPuesto);
     }
 
+    public List<RequisitoPuesto> obtenerPorPuesto(Long puestoId){
+        return requisitoRepository.findByPuestoId(puestoId);
+    }
 }

@@ -21,4 +21,13 @@ public class CaracteristicaService {
         return caracteristicaRepository.save(caracteristica);
     }
 
+    public List<Caracteristica> obtenerRaices(){
+        return caracteristicaRepository.findByPadreIsNull();
+    }
+
+    public List<Caracteristica> obtenerHijos(Long padreId){
+        return caracteristicaRepository.findByPadreId(padreId);
+    }
+
+
 }

@@ -21,8 +21,15 @@ public class OferenteService {
         return oferenteRepository.save(oferente);
     }
 
-    public Oferente obtenerPorId(String id){
+    public Oferente obtenerPorId(Long id){
         return oferenteRepository.findById(id).orElse(null);
     }
 
+    public void aprobar(Long id) {
+        Oferente o = obtenerPorId(id);
+        if (o != null) {
+            o.setAprobado(true);
+            oferenteRepository.save(o);
+        }
+    }
 }
