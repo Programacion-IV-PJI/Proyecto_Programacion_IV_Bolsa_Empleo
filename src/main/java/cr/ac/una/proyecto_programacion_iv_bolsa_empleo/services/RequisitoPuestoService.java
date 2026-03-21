@@ -20,7 +20,15 @@ public class RequisitoPuestoService {
         return requisitoRepository.save(requisitoPuesto);
     }
 
+    public RequisitoPuesto obtenerPorId(Long id) {
+        return requisitoRepository.findById(id).orElse(null);
+    }
+
     public List<RequisitoPuesto> obtenerPorPuesto(Long puestoId){
         return requisitoRepository.findByPuestoId(puestoId);
+    }
+
+    public void eliminar(Long id) {
+        requisitoRepository.deleteById(id);
     }
 }

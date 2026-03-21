@@ -1,15 +1,27 @@
 package cr.ac.una.proyecto_programacion_iv_bolsa_empleo.controllers;
 
+import cr.ac.una.proyecto_programacion_iv_bolsa_empleo.models.Caracteristica;
 import cr.ac.una.proyecto_programacion_iv_bolsa_empleo.models.Oferente;
 import cr.ac.una.proyecto_programacion_iv_bolsa_empleo.services.HabilidadService;
 import cr.ac.una.proyecto_programacion_iv_bolsa_empleo.models.Habilidad;
 import cr.ac.una.proyecto_programacion_iv_bolsa_empleo.services.OferenteService;
+import cr.ac.una.proyecto_programacion_iv_bolsa_empleo.services.CaracteristicaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import jakarta.servlet.http.HttpSession;
 @Controller
 @RequestMapping("/oferente")
 public class OferenteController {
@@ -20,69 +32,109 @@ public class OferenteController {
     @Autowired
     private HabilidadService habilidadService;
 
-    // 🔥 SIMULACIÓN DE USUARIO LOGUEADO
-    private Long usuarioId = 1L;
+    @Autowired
+    private CaracteristicaService caracteristicaService;
 
-    // =========================
     // DASHBOARD
-    // =========================
     @GetMapping("/dashboard")
-    public String dashboard() {
+    public String dashboard(HttpSession session, Model model) {
+        Long id = (Long) session.getAttribute("id");
+        Oferente oferente = oferenteService.obtenerPorId(id);
+        model.addAttribute("oferente", oferente);
         return "oferente/dashboard";
     }
 
-    // =========================
     // HABILIDADES
-    // =========================
     @GetMapping("/habilidades")
-    public String habilidades(
-            @RequestParam(required = false) Long actualId,
-            Model model) {
+    public String habilidades(HttpSession session, @RequestParam(required = false) Long actualId, Model model) {
+        Long id = (Long) session.getAttribute("id");
+        Oferente oferente = oferenteService.obtenerPorId(id);
+        model.addAttribute("oferente", oferente);
+        model.addAttribute("misHabilidades", oferente.getHabilidades());
 
-        // 🔥 luego conectamos con DB real
-        model.addAttribute("misHabilidades", null);
-        model.addAttribute("ruta", null);
-        model.addAttribute("actual", null);
-        model.addAttribute("subcategorias", null);
-        model.addAttribute("todasCaracteristicas", null);
+        List<Caracteristica> ruta = new ArrayList<>();
+        Caracteristica actual = null;
+        List<Caracteristica> subcategorias;
+
+        if (actualId != null) {
+            actual = caracteristicaService.obtenerPorId(actualId);
+            Caracteristica temp = actual;
+            while (temp != null) {
+                ruta.add(0, temp);
+                temp = temp.getPadre();
+            }
+            subcategorias = actual.getHijos();
+        } else {
+            subcategorias = caracteristicaService.obtenerRaices();
+        }
+
+        model.addAttribute("ruta", ruta);
+        model.addAttribute("actual", actual);
+        model.addAttribute("subcategorias", subcategorias);
+        model.addAttribute("todasCaracteristicas", caracteristicaService.obtenerTodas());
 
         return "oferente/habilidades";
     }
 
     @PostMapping("/habilidades/agregar")
-    public String agregarHabilidad(
-            @RequestParam Long caracteristicaId,
-            @RequestParam int nivel) {
+    public String agregarHabilidad(HttpSession session, @RequestParam Long caracteristicaId, @RequestParam int nivel) {
+        Long id = (Long) session.getAttribute("id");
+        Oferente oferente = oferenteService.obtenerPorId(id);
+        Caracteristica caracteristica = caracteristicaService.obtenerPorId(caracteristicaId);
 
-        Habilidad h = new Habilidad();
-        h.setNivel(nivel);
+        boolean yaExiste = oferente.getHabilidades().stream().anyMatch(h -> h.getCaracteristica().getId().equals(caracteristicaId));
 
-        // 🔥 luego asignamos oferente y caracteristica
-        habilidadService.guardar(h);
+        if (!yaExiste) {
+            Habilidad h = new Habilidad();
+            h.setNivel(nivel);
+            h.setOferente(oferente);
+            h.setCaracteristica(caracteristica);
+            habilidadService.guardar(h);
+        }
 
         return "redirect:/oferente/habilidades";
     }
 
-    // =========================
     // CV
-    // =========================
     @GetMapping("/mi-cv")
-    public String miCV(Model model) {
-
-        Oferente oferente = oferenteService.obtenerPorId(usuarioId);
-
+    public String miCV(HttpSession session, Model model) {
+        Long id = (Long) session.getAttribute("id");
+        Oferente oferente = oferenteService.obtenerPorId(id);
         model.addAttribute("oferente", oferente);
-
         return "oferente/mi-cv";
     }
 
     @PostMapping("/subir-cv")
-    public String subirCV(@RequestParam("archivo") MultipartFile archivo) {
+    public String subirCV(HttpSession session, @RequestParam("archivo") MultipartFile archivo) {
+        Long id = (Long) session.getAttribute("id");
+        try {
+            String carpeta = "cvs/";
+            File dir = new File(carpeta);
+            if (!dir.exists()) dir.mkdirs();
+            Oferente oferente = oferenteService.obtenerPorId(id);
+            String nombreArchivo = oferente.getId() + "_cv.pdf"; // antes era cv_{id}.pdf
+            Path ruta = Paths.get(carpeta + nombreArchivo);
+            Files.write(ruta, archivo.getBytes());
 
-        System.out.println("Archivo recibido: " + archivo.getOriginalFilename());
-
-        // 🔥 luego guardamos archivo real
+            oferente.setCvPath(carpeta + nombreArchivo);
+            oferenteService.guardar(oferente);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return "redirect:/oferente/mi-cv";
+    }
+
+    @GetMapping("/uploads/cvs/{filename}")
+    @ResponseBody
+    public ResponseEntity<Resource> servirCV(@PathVariable String filename) {
+        try {
+            Resource resource = new FileSystemResource("cvs/" + filename);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_TYPE, "application/pdf")
+                    .body(resource);
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

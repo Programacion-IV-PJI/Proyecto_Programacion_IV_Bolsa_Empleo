@@ -17,6 +17,10 @@ public class EmpresaService {
         return empresaRepository.findAll();
     }
 
+    public List<Empresa> obtenerPendientes() {
+        return empresaRepository.findByAprobadoFalse();
+    }
+
     public Empresa guardar(Empresa empresa){
         return empresaRepository.save(empresa);
     }
@@ -32,8 +36,12 @@ public class EmpresaService {
     public void aprobar(Long id) {
         Empresa e = obtenerPorId(id);
         if (e != null) {
-            e.setAprobado(true); // ⚠️ necesitas este campo en el modelo
+            e.setAprobado(true);
             empresaRepository.save(e);
         }
+    }
+
+    public Empresa buscarPorUsuarioYClave(String usuario, String clave) {
+        return empresaRepository.findByCorreoAndPassword(usuario, clave);
     }
 }

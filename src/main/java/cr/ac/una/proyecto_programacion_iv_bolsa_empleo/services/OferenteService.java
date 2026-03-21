@@ -14,14 +14,25 @@ public class OferenteService {
     private IOferenteRepository oferenteRepository;
 
     public List<Oferente> obtenerTodos(){
+
         return oferenteRepository.findAll();
     }
 
+    public List<Oferente> obtenerPendientes() {
+        return oferenteRepository.findByAprobadoFalse();
+    }
+
+    public List<Oferente> obtenerAprobados() {
+        return oferenteRepository.findByAprobadoTrue();
+    }
+
     public Oferente guardar(Oferente oferente){
+
         return oferenteRepository.save(oferente);
     }
 
     public Oferente obtenerPorId(Long id){
+
         return oferenteRepository.findById(id).orElse(null);
     }
 
@@ -31,5 +42,9 @@ public class OferenteService {
             o.setAprobado(true);
             oferenteRepository.save(o);
         }
+    }
+
+    public Oferente buscarPorUsuarioYClave(String usuario, String clave) {
+        return oferenteRepository.findByCorreoAndPassword(usuario, clave);
     }
 }
