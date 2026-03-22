@@ -29,18 +29,26 @@ public class EmpresaController {
     @Autowired
     private RequisitoPuestoService requisitoPuestoService;
 
-    // Dashboard
+    private String verificarEmpresa(HttpSession session) {
+        String rol = (String) session.getAttribute("rol");
+        if (rol == null || !rol.equals("empresa")) return "redirect:/login";
+        return null;
+    }
+
     @GetMapping("/dashboard")
     public String dashboard(HttpSession session, Model model) {
+        String redirect = verificarEmpresa(session);
+        if (redirect != null) return redirect;
         Long id = (Long) session.getAttribute("id");
         Empresa empresa = empresaService.obtenerPorId(id);
         model.addAttribute("empresa", empresa);
         return "empresa/dashboard";
     }
 
-    // Ver puestos (HTML usa /empresa/puestos)
     @GetMapping("/puestos")
     public String puestos(HttpSession session, Model model) {
+        String redirect = verificarEmpresa(session);
+        if (redirect != null) return redirect;
         Long id = (Long) session.getAttribute("id");
         Empresa empresa = empresaService.obtenerPorId(id);
         model.addAttribute("empresa", empresa);
@@ -48,17 +56,22 @@ public class EmpresaController {
         return "empresa/mis-puestos";
     }
 
-    // Mostrar formulario (HTML usa /empresa/puestos/nuevo)
     @GetMapping("/puestos/nuevo")
     public String nuevoPuesto(HttpSession session, Model model) {
+        String redirect = verificarEmpresa(session);
+        if (redirect != null) return redirect;
         model.addAttribute("puesto", new Puesto());
         model.addAttribute("caracteristicas", caracteristicaService.obtenerTodas());
         return "empresa/publicar-puesto";
     }
 
-    // Guardar puesto (HTML usa /empresa/puestos/guardar)
     @PostMapping("/puestos/guardar")
-    public String guardarPuesto(@ModelAttribute Puesto puesto, HttpSession session, @RequestParam(required = false) List<Long> caracteristicaIds, @RequestParam(required = false) List<Integer> niveles) {
+    public String guardarPuesto(@ModelAttribute Puesto puesto,
+                                HttpSession session,
+                                @RequestParam(required = false) List<Long> caracteristicaIds,
+                                @RequestParam(required = false) List<Integer> niveles) {
+        String redirect = verificarEmpresa(session);
+        if (redirect != null) return redirect;
         Long id = (Long) session.getAttribute("id");
         Empresa empresa = empresaService.obtenerPorId(id);
         puesto.setEmpresa(empresa);
@@ -77,9 +90,11 @@ public class EmpresaController {
         return "redirect:/empresa/puestos";
     }
 
-    // Buscar candidatos (HTML usa /empresa/candidatos/buscar)
     @GetMapping("/candidatos/buscar")
-    public String buscarCandidatos(@RequestParam Long puestoId, Model model) {
+    public String buscarCandidatos(@RequestParam Long puestoId,
+                                   HttpSession session, Model model) {
+        String redirect = verificarEmpresa(session);
+        if (redirect != null) return redirect;
 
         Puesto puesto = puestoService.obtenerPorId(puestoId);
         List<Oferente> todosOferentes = oferenteService.obtenerAprobados();
@@ -88,7 +103,6 @@ public class EmpresaController {
 
         for (Oferente oferente : todosOferentes) {
             if (requisitos.isEmpty()) {
-                // Si no hay requisitos, mostrar todos con 100%
                 resultados.add(new CandidatoResultado(oferente, 0, 0));
             } else {
                 int cumplidos = 0;
@@ -108,24 +122,26 @@ public class EmpresaController {
         return "empresa/candidatos";
     }
 
-    // Ver detalle candidato
     @GetMapping("/candidatos/{id}")
-    public String detalleCandidato(@PathVariable Long id, Model model) {
-
+    public String detalleCandidato(@PathVariable Long id,
+                                   HttpSession session, Model model) {
+        String redirect = verificarEmpresa(session);
+        if (redirect != null) return redirect;
         Oferente oferente = oferenteService.obtenerPorId(id);
         model.addAttribute("oferente", oferente);
         model.addAttribute("habilidades", oferente.getHabilidades());
         return "empresa/detalle-candidato";
     }
 
-    // Desactivar puesto (HTML lo usa)
     @GetMapping("/puestos/desactivar/{id}")
-    public String desactivarPuesto(@PathVariable Long id) {
+    public String desactivarPuesto(@PathVariable Long id, HttpSession session) {
+        String redirect = verificarEmpresa(session);
+        if (redirect != null) return redirect;
         Puesto puesto = puestoService.obtenerPorId(id);
         if (puesto != null) {
             puesto.setActivo(false);
             puestoService.guardar(puesto);
         }
-        return "redirect:/empresa/puestos?id=";
+        return "redirect:/empresa/puestos";
     }
 }
