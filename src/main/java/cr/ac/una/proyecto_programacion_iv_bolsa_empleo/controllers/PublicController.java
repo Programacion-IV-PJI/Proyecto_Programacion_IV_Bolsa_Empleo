@@ -1,7 +1,9 @@
 package cr.ac.una.proyecto_programacion_iv_bolsa_empleo.controllers;
 
+import cr.ac.una.proyecto_programacion_iv_bolsa_empleo.models.Administrador;
 import cr.ac.una.proyecto_programacion_iv_bolsa_empleo.models.Empresa;
 import cr.ac.una.proyecto_programacion_iv_bolsa_empleo.models.Oferente;
+import cr.ac.una.proyecto_programacion_iv_bolsa_empleo.services.AdminService;
 import cr.ac.una.proyecto_programacion_iv_bolsa_empleo.services.CaracteristicaService;
 import cr.ac.una.proyecto_programacion_iv_bolsa_empleo.services.EmpresaService;
 import cr.ac.una.proyecto_programacion_iv_bolsa_empleo.services.OferenteService;
@@ -28,14 +30,15 @@ public class PublicController {
     @Autowired
     private CaracteristicaService caracteristicaService;
 
-    // INDEX - muestra últimos 5 puestos públicos
+    @Autowired
+    private AdminService administradorService;
+
     @GetMapping("/")
     public String index(Model model) {
         model.addAttribute("puestos", puestoService.obtenerPublicos());
         return "publico/index";
     }
 
-    // LOGIN
     @GetMapping("/login")
     public String login() {
         return "publico/login";
@@ -62,7 +65,11 @@ public class PublicController {
             return "redirect:/oferente/dashboard";
         }
 
-        if (usuario.equals("admin@bolsa.com") && clave.equals("admin123")) {
+        Administrador admin = administradorService.buscarPorCredenciales(usuario, clave);
+        if (admin != null) {
+            session.setAttribute("id", admin.getId());
+            session.setAttribute("correo", admin.getIdentificacion());
+            session.setAttribute("rol", "admin");
             return "redirect:/admin/dashboard";
         }
 
@@ -76,7 +83,6 @@ public class PublicController {
         return "redirect:/";
     }
 
-    // REGISTRO EMPRESA
     @GetMapping("/registro/empresa")
     public String registroEmpresa(Model model) {
         model.addAttribute("empresa", new Empresa());
@@ -93,7 +99,6 @@ public class PublicController {
         return "redirect:/login";
     }
 
-    // REGISTRO OFERENTE
     @GetMapping("/registro/oferente")
     public String registroOferente(Model model) {
         model.addAttribute("oferente", new Oferente());
@@ -110,7 +115,6 @@ public class PublicController {
         return "redirect:/login";
     }
 
-    // BUSCAR PUESTOS PÚBLICOS
     @GetMapping("/buscar")
     public String buscarPuestos(Model model) {
         model.addAttribute("caracteristicas", caracteristicaService.obtenerTodas());

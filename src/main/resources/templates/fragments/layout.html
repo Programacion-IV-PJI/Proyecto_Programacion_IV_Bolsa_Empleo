@@ -3,51 +3,65 @@
 
 <head th:fragment="head(titulo)">
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${titulo}">Bolsa de Empleo</title>
     <link rel="stylesheet" th:href="@{/styles.css}">
 </head>
 
 <nav th:fragment="nav-publica" class="navbar">
     <div class="nav-left">
-        <a th:href="@{/}" class="nav-logo">BolsaEmpleo</a>
+        <a th:href="@{/}" class="nav-logo">
+            <img th:src="@{/img/logo.png}" alt="Logo" onerror="this.style.display='none'">
+            BolsaEmpleo
+        </a>
         <a th:href="@{/buscar}">Buscar puestos</a>
         <a th:href="@{/registro/empresa}">Registro Empresa</a>
         <a th:href="@{/registro/oferente}">Registro Oferente</a>
     </div>
     <div class="nav-right">
-        <a th:href="@{/login}">Login</a>
+        <a th:href="@{/login}" class="btn-login-nav">Login</a>
     </div>
 </nav>
 
 <nav th:fragment="nav-empresa" class="navbar">
     <div class="nav-left">
-        <a th:href="@{/}" class="nav-logo">BolsaEmpleo</a>
+        <a th:href="@{/}" class="nav-logo">
+            <img th:src="@{/img/logo.png}" alt="Logo" onerror="this.style.display='none'">
+            BolsaEmpleo
+        </a>
         <a th:href="@{/empresa/dashboard}">Dashboard</a>
         <a th:href="@{/empresa/puestos}">Mis puestos</a>
         <a th:href="@{/empresa/puestos/nuevo}">Publicar puesto</a>
     </div>
     <div class="nav-right">
         <span th:text="${session.correo}"></span>
-        <a th:href="@{/logout}">Salir</a>
+        <a th:href="@{/logout}" class="btn-login-nav">Salir</a>
     </div>
 </nav>
 
 <nav th:fragment="nav-oferente" class="navbar">
     <div class="nav-left">
-        <a th:href="@{/}" class="nav-logo">BolsaEmpleo</a>
+        <a th:href="@{/}" class="nav-logo">
+            <img th:src="@{/img/logo.png}" alt="Logo" onerror="this.style.display='none'">
+            BolsaEmpleo
+        </a>
         <a th:href="@{/oferente/dashboard}">Dashboard</a>
+        <a th:href="@{/oferente/puestos}">Ver puestos</a>
         <a th:href="@{/oferente/habilidades}">Mis habilidades</a>
         <a th:href="@{/oferente/mi-cv}">Mi CV</a>
     </div>
     <div class="nav-right">
         <span th:text="${session.correo}"></span>
-        <a th:href="@{/logout}">Salir</a>
+        <a th:href="@{/logout}" class="btn-login-nav">Salir</a>
     </div>
 </nav>
 
 <nav th:fragment="nav-admin" class="navbar">
     <div class="nav-left">
-        <a th:href="@{/}" class="nav-logo">BolsaEmpleo</a>
+        <a th:href="@{/}" class="nav-logo">
+            <img th:src="@{/img/logo.png}" alt="Logo" onerror="this.style.display='none'">
+            BolsaEmpleo
+        </a>
         <a th:href="@{/admin/dashboard}">Dashboard</a>
         <a th:href="@{/admin/empresas/pendientes}">Empresas pendientes</a>
         <a th:href="@{/admin/oferentes/pendientes}">Oferentes pendientes</a>
@@ -56,7 +70,7 @@
     </div>
     <div class="nav-right">
         <span th:text="${session.correo}"></span>
-        <a th:href="@{/logout}">Salir</a>
+        <a th:href="@{/logout}" class="btn-login-nav">Salir</a>
     </div>
 </nav>
 

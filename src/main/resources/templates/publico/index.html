@@ -2,39 +2,41 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/layout :: head('Inicio')}"></head>
 <body>
-    <nav th:replace="~{fragments/layout :: nav-publica}"></nav>
+<nav th:replace="~{fragments/layout :: nav-publica}"></nav>
 
-    <div class="container-wide">
-        <h1>Bolsa de Empleo</h1>
-        <p class="subtitle">Ultimos 5 puestos publicos</p>
+<div class="container-wide">
+    <h1>Bolsa de Empleo</h1>
+    <hr class="divider">
 
-        <div class="cards-grid">
-            <div class="card" th:each="puesto : ${puestos}">
+    <div class="cards-grid">
+        <div class="card" th:each="puesto : ${puestos}">
+            <div>
                 <h3 th:text="${puesto.empresa.nombre}">Nombre Empresa</h3>
                 <p class="card-title" th:text="${puesto.descripcion}">Puesto</p>
                 <p class="card-salary" th:text="'&#8353; ' + ${puesto.salario}">Salario</p>
-                <a href="#" class="btn btn-outline">Ver detalle</a>
+            </div>
+            <a href="#" class="btn-card">Mostrar mas</a>
 
-                <div class="card-detail">
-                    <h4 th:text="${puesto.descripcion}">Puesto</h4>
-                    <ul>
-                        <li th:each="pc : ${puesto.caracteristicas}"
-                            th:text="${pc.caracteristica.nombre} + ' (nivel ' + ${pc.nivelDeseado} + ')'">
-                            Caracteristica
-                        </li>
-                    </ul>
-                    <p th:if="${#lists.isEmpty(puesto.caracteristicas)}" style="font-size: 13px; color: #999;">
-                        Sin caracteristicas registradas
-                    </p>
-                </div>
+            <div class="card-detail">
+                <h4 th:text="${puesto.descripcion}">Puesto</h4>
+                <ul>
+                    <li th:each="pc : ${puesto.caracteristicas}"
+                        th:text="${pc.caracteristica.nombre} + ' (nivel ' + ${pc.nivelDeseado} + ')'">
+                        Caracteristica
+                    </li>
+                </ul>
+                <p th:if="${puesto.caracteristicas == null || puesto.caracteristicas.isEmpty()}" style="font-size: 13px; color: #999;">
+                    Sin caracteristicas registradas
+                </p>
             </div>
         </div>
-
-        <p th:if="${#lists.isEmpty(puestos)}" style="margin-top: 24px; color: #999;">
-            No hay puestos publicos disponibles.
-        </p>
     </div>
 
-    <footer th:replace="~{fragments/layout :: footer}"></footer>
+    <p th:if="${puestos == null || puestos.isEmpty()}" style="margin-top: 24px; color: #999; text-align: center;">
+        No hay puestos publicos disponibles.
+    </p>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
 </body>
 </html>

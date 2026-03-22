@@ -1,8 +1,6 @@
 package cr.ac.una.proyecto_programacion_iv_bolsa_empleo.controllers;
 
 import cr.ac.una.proyecto_programacion_iv_bolsa_empleo.models.Caracteristica;
-import cr.ac.una.proyecto_programacion_iv_bolsa_empleo.models.Empresa;
-import cr.ac.una.proyecto_programacion_iv_bolsa_empleo.models.Oferente;
 import cr.ac.una.proyecto_programacion_iv_bolsa_empleo.models.Puesto;
 import cr.ac.una.proyecto_programacion_iv_bolsa_empleo.services.CaracteristicaService;
 import cr.ac.una.proyecto_programacion_iv_bolsa_empleo.services.EmpresaService;
@@ -11,6 +9,7 @@ import cr.ac.una.proyecto_programacion_iv_bolsa_empleo.services.PuestoService;
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.*;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -35,25 +34,35 @@ public class AdminController {
     @Autowired
     private PuestoService puestoService;
 
-    // Dashboard
+    private String verificarAdmin(HttpSession session) {
+        String rol = (String) session.getAttribute("rol");
+        if (rol == null || !rol.equals("admin")) return "redirect:/login";
+        return null;
+    }
+
     @GetMapping("/dashboard")
-    public String dashboard(Model model) {
+    public String dashboard(HttpSession session, Model model) {
+        String redirect = verificarAdmin(session);
+        if (redirect != null) return redirect;
         model.addAttribute("totalEmpresas", empresaService.obtenerTodas().size());
         model.addAttribute("totalOferentes", oferenteService.obtenerTodos().size());
         return "admin/dashboard";
     }
 
-    // EMPRESAS
     @GetMapping("/empresas/pendientes")
-    public String empresasPendientes(Model model) {
+    public String empresasPendientes(HttpSession session, Model model) {
+        String redirect = verificarAdmin(session);
+        if (redirect != null) return redirect;
         model.addAttribute("empresas", empresaService.obtenerPendientes());
         return "admin/empresas-pendientes";
     }
 
     @GetMapping("/empresas/aprobar/{id}")
-    public String aprobarEmpresa(@PathVariable Long id) {
+    public String aprobarEmpresa(@PathVariable Long id, HttpSession session) {
+        String redirect = verificarAdmin(session);
+        if (redirect != null) return redirect;
         empresaService.aprobar(id);
-        Empresa e = empresaService.obtenerPorId(id);
+        var e = empresaService.obtenerPorId(id);
         if (e.getPassword() == null || e.getPassword().isEmpty()) {
             e.setPassword(e.getCorreo());
             empresaService.guardar(e);
@@ -61,17 +70,20 @@ public class AdminController {
         return "redirect:/admin/empresas/pendientes";
     }
 
-    // OFERENTES
     @GetMapping("/oferentes/pendientes")
-    public String oferentesPendientes(Model model) {
+    public String oferentesPendientes(HttpSession session, Model model) {
+        String redirect = verificarAdmin(session);
+        if (redirect != null) return redirect;
         model.addAttribute("oferentes", oferenteService.obtenerPendientes());
         return "admin/oferentes-pendientes";
     }
 
     @GetMapping("/oferentes/aprobar/{id}")
-    public String aprobarOferente(@PathVariable Long id) {
+    public String aprobarOferente(@PathVariable Long id, HttpSession session) {
+        String redirect = verificarAdmin(session);
+        if (redirect != null) return redirect;
         oferenteService.aprobar(id);
-        Oferente o = oferenteService.obtenerPorId(id);
+        var o = oferenteService.obtenerPorId(id);
         if (o.getPassword() == null || o.getPassword().isEmpty()) {
             o.setPassword(o.getIdentificacion());
             oferenteService.guardar(o);
@@ -79,9 +91,11 @@ public class AdminController {
         return "redirect:/admin/oferentes/pendientes";
     }
 
-    // CARACTERISTICAS
     @GetMapping("/caracteristicas")
-    public String caracteristicas(@RequestParam(required = false) Long actualId, Model model) {
+    public String caracteristicas(@RequestParam(required = false) Long actualId,
+                                  HttpSession session, Model model) {
+        String redirect = verificarAdmin(session);
+        if (redirect != null) return redirect;
 
         List<Caracteristica> ruta = new java.util.ArrayList<>();
         Caracteristica actual = null;
@@ -106,7 +120,12 @@ public class AdminController {
     }
 
     @PostMapping("/caracteristicas/crear")
-    public String crearCaracteristica(@RequestParam String nombre, @RequestParam(required = false) Long padreId, @RequestParam(required = false) Long actualId) {
+    public String crearCaracteristica(@RequestParam String nombre,
+                                      @RequestParam(required = false) Long padreId,
+                                      @RequestParam(required = false) Long actualId,
+                                      HttpSession session) {
+        String redirect = verificarAdmin(session);
+        if (redirect != null) return redirect;
 
         Caracteristica c = new Caracteristica();
         c.setNombre(nombre);
@@ -117,24 +136,33 @@ public class AdminController {
         if (actualId != null) {
             return "redirect:/admin/caracteristicas?actualId=" + actualId;
         }
-
         return "redirect:/admin/caracteristicas";
     }
 
-    // REPORTES
     @GetMapping("/reportes")
-    public String reportes(Model model) {
+    public String reportes(HttpSession session, Model model) {
+        String redirect = verificarAdmin(session);
+        if (redirect != null) return redirect;
         model.addAttribute("anioActual", java.time.LocalDate.now().getYear());
         return "admin/reportes";
     }
 
     @GetMapping("/reportes/generar")
-    public String generarReporte(@RequestParam int mes, @RequestParam int anio, HttpServletResponse response) throws IOException {
+    public void generarReporte(@RequestParam int mes,
+                               @RequestParam int anio,
+                               HttpSession session,
+                               HttpServletResponse response) throws IOException {
+        String rol = (String) session.getAttribute("rol");
+        if (rol == null || !rol.equals("admin")) {
+            response.sendRedirect("/login");
+            return;
+        }
 
         List<Puesto> puestos = puestoService.obtenerPorMesYAnio(mes, anio);
 
         response.setContentType("application/pdf");
-        response.setHeader("Content-Disposition", "attachment; filename=reporte_" + mes + "_" + anio + ".pdf");
+        response.setHeader("Content-Disposition",
+                "attachment; filename=reporte_" + mes + "_" + anio + ".pdf");
 
         Document document = new Document();
         try {
@@ -150,15 +178,15 @@ public class AdminController {
             document.add(new Paragraph(" "));
 
             for (Puesto p : puestos) {
-                document.add(new Paragraph("• " + p.getDescripcion() +
-                        " | Empresa: " + p.getEmpresa().getNombre() +
-                        " | Salario: " + p.getSalario(), normalFont));
+                document.add(new Paragraph(
+                        "- " + p.getDescripcion() +
+                                " | Empresa: " + p.getEmpresa().getNombre() +
+                                " | Salario: " + p.getSalario(), normalFont));
             }
 
             document.close();
         } catch (DocumentException e) {
             e.printStackTrace();
         }
-        return "redirect:/admin/caracteristicas";
     }
 }

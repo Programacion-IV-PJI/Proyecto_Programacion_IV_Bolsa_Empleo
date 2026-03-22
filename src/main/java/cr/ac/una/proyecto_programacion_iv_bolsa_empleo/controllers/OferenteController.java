@@ -22,6 +22,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import jakarta.servlet.http.HttpSession;
+
 @Controller
 @RequestMapping("/oferente")
 public class OferenteController {
@@ -35,18 +36,28 @@ public class OferenteController {
     @Autowired
     private CaracteristicaService caracteristicaService;
 
-    // DASHBOARD
+    private String verificarOferente(HttpSession session) {
+        String rol = (String) session.getAttribute("rol");
+        if (rol == null || !rol.equals("oferente")) return "redirect:/login";
+        return null;
+    }
+
     @GetMapping("/dashboard")
     public String dashboard(HttpSession session, Model model) {
+        String redirect = verificarOferente(session);
+        if (redirect != null) return redirect;
         Long id = (Long) session.getAttribute("id");
         Oferente oferente = oferenteService.obtenerPorId(id);
         model.addAttribute("oferente", oferente);
         return "oferente/dashboard";
     }
 
-    // HABILIDADES
     @GetMapping("/habilidades")
-    public String habilidades(HttpSession session, @RequestParam(required = false) Long actualId, Model model) {
+    public String habilidades(HttpSession session,
+                              @RequestParam(required = false) Long actualId,
+                              Model model) {
+        String redirect = verificarOferente(session);
+        if (redirect != null) return redirect;
         Long id = (Long) session.getAttribute("id");
         Oferente oferente = oferenteService.obtenerPorId(id);
         model.addAttribute("oferente", oferente);
@@ -77,12 +88,17 @@ public class OferenteController {
     }
 
     @PostMapping("/habilidades/agregar")
-    public String agregarHabilidad(HttpSession session, @RequestParam Long caracteristicaId, @RequestParam int nivel) {
+    public String agregarHabilidad(HttpSession session,
+                                   @RequestParam Long caracteristicaId,
+                                   @RequestParam int nivel) {
+        String redirect = verificarOferente(session);
+        if (redirect != null) return redirect;
         Long id = (Long) session.getAttribute("id");
         Oferente oferente = oferenteService.obtenerPorId(id);
         Caracteristica caracteristica = caracteristicaService.obtenerPorId(caracteristicaId);
 
-        boolean yaExiste = oferente.getHabilidades().stream().anyMatch(h -> h.getCaracteristica().getId().equals(caracteristicaId));
+        boolean yaExiste = oferente.getHabilidades().stream()
+                .anyMatch(h -> h.getCaracteristica().getId().equals(caracteristicaId));
 
         if (!yaExiste) {
             Habilidad h = new Habilidad();
@@ -95,9 +111,10 @@ public class OferenteController {
         return "redirect:/oferente/habilidades";
     }
 
-    // CV
     @GetMapping("/mi-cv")
     public String miCV(HttpSession session, Model model) {
+        String redirect = verificarOferente(session);
+        if (redirect != null) return redirect;
         Long id = (Long) session.getAttribute("id");
         Oferente oferente = oferenteService.obtenerPorId(id);
         model.addAttribute("oferente", oferente);
@@ -105,14 +122,17 @@ public class OferenteController {
     }
 
     @PostMapping("/subir-cv")
-    public String subirCV(HttpSession session, @RequestParam("archivo") MultipartFile archivo) {
+    public String subirCV(HttpSession session,
+                          @RequestParam("archivo") MultipartFile archivo) {
+        String redirect = verificarOferente(session);
+        if (redirect != null) return redirect;
         Long id = (Long) session.getAttribute("id");
         try {
             String carpeta = "cvs/";
             File dir = new File(carpeta);
             if (!dir.exists()) dir.mkdirs();
             Oferente oferente = oferenteService.obtenerPorId(id);
-            String nombreArchivo = oferente.getId() + "_cv.pdf"; // antes era cv_{id}.pdf
+            String nombreArchivo = oferente.getId() + "_cv.pdf";
             Path ruta = Paths.get(carpeta + nombreArchivo);
             Files.write(ruta, archivo.getBytes());
 
